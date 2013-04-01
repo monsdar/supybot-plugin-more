@@ -1,0 +1,48 @@
+#labels install,usage,readme
+=Installation and Usage=
+
+==Prerequisites==
+This plugin has been tested with Python 2.7.3. 
+
+I'm using supybot 0.83.4.1. As there are no information about the downward compatibility of supybot I recommend using at least this version.
+
+==Install==
+Simply put the Sourcecode into a directory called `More` into your supybot plugin directory.
+You can load the plugin by performing the command
+{{{
+load More
+}}}
+in your IRC client.
+
+==Usage==
+You can use supybots builtin help system to get detailed information about the plugin. The following is an example of how to use the plugin. Note that my nickname here is 'monsdar' while the Bot is called 'Android':
+
+{{{
+<@monsdar> @load More
+
+<@monsdar> @more add MorePlugin Details This plugin displays information about a certain topic
+<@monsdar> @more add MorePlugin URL https://code.google.com/p/supybot-plugin-more/
+<@monsdar> @more add MorePlugin Author Nils Brinkmann
+
+<@monsdar> @more add monsdar Name Nils Brinkmann
+<@monsdar> @more add monsdar Blog http://www.nilsbrinkmann.com
+
+<@monsdar> @more list
+<@Android> monsdar: MorePlugin
+<@Android> monsdar: monsdar
+
+<@monsdar> @more MorePlugin
+<@Android> Information for MorePlugin:
+<@Android> URL: https://code.google.com/p/supybot-plugin-more/
+<@Android> Details: This plugin displays information about a certain topic
+<@Android> Author: Nils Brinkmann
+
+<@monsdar> @more monsdar
+<@Android> Information for monsdar:
+<@Android> Blog: http://www.nilsbrinkmann.com
+<@Android> Name: Nils Brinkmann
+
+<@monsdar> @more remove monsdar
+<@monsdar> @more list
+<@Android> monsdar: MorePlugin
+}}}
