@@ -16,7 +16,7 @@ import supybot.plugins as plugins
 import supybot.utils as utils
 from supybot.commands import *
 
-class MoreItem():
+class InfoItem():
     def __init__(self, name):
         self.name = name
         self.items = {}
@@ -29,20 +29,23 @@ class MoreItem():
         
     def output(self, irc, channel):
         irc.queueMsg( ircmsgs.privmsg(channel, "Information for \x02" + self.name + "\x02:") )
+        if( len(self.items) == 0):
+            irc.queueMsg( ircmsgs.privmsg(channel, "No information") )
+            
         for (title, text) in self.items.items():
             irc.queueMsg( ircmsgs.privmsg(channel, "\x02" + title + "\x02: " + text) )
 
-class More(callbacks.Plugin):
+class Info(callbacks.Plugin):
     """Displays generic information about a specific topic."""
     def __init__(self, irc):
-        self.__parent = super(More, self)
+        self.__parent = super(Info, self)
         self.__parent.__init__(irc)
         
         #a dict is easier to search
         self.items = {}
     
         #read the items from file
-        filepath = conf.supybot.directories.data.dirize('More.db')
+        filepath = conf.supybot.directories.data.dirize('Info.db')
         if( os.path.exists(filepath) ):
             try:
                 self.items = cPickle.load( open( filepath, "rb" ) )
@@ -53,10 +56,10 @@ class More(callbacks.Plugin):
     def die(self):
         #Pickle the items to a file
         try:
-            filepath = conf.supybot.directories.data.dirize('More.db')
+            filepath = conf.supybot.directories.data.dirize('Info.db')
             cPickle.dump( self.items, open( filepath, "wb" ) )
         except cPickle.PicklingError as error:
-            print("More: Error when pickling to file...")
+            print("Info: Error when pickling to file...")
             print(error)
         
     def list(self, irc, msg, args):
@@ -71,7 +74,7 @@ class More(callbacks.Plugin):
             
     list = wrap(list)
 
-    def more(self, irc, msg, args, name, channel):
+    def info(self, irc, msg, args, name, channel):
         """<name> [<channel>]
         
         Displays content of the given <name>"""
@@ -80,10 +83,10 @@ class More(callbacks.Plugin):
             return
             
         self.items[name].output(irc, channel)
-    more = wrap(more, ['somethingWithoutSpaces', 'channel'])
+    info = wrap(info, ['somethingWithoutSpaces', 'channel'])
     
     def add(self, irc, msg, args, name, title, text):
-        """<name> <item>
+        """<name> <title> <text>
 
         Adds an item with the given <title> and <text> to the topic <name>.
         The <name> and <title> must be without spaces. The <text> then is everything following.
@@ -92,7 +95,7 @@ class More(callbacks.Plugin):
         if( name in  self.items):
             item = self.items[name]
         else:
-            item = MoreItem(name)
+            item = InfoItem(name)
             
         item.append(title, text)
         self.items[name] = item
@@ -123,7 +126,7 @@ class More(callbacks.Plugin):
         irc.replySuccess()
     clear = wrap(clear, ['somethingWithoutSpaces'])
     
-Class = More
+Class = Info
 
 
 # vim:set shiftwidth=4 softtabstop=4 expandtab textwidth=79:
